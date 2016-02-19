@@ -63,6 +63,10 @@ var Component = React.createClass({
         Component.instance = this;
     },
 
+    componentDidMount() {
+        window.a = this;
+    }
+
     componentWillUnmount() {
         delete Component.instance;
     },
