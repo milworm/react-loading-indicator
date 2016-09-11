@@ -59,7 +59,9 @@ let Component = React.createClass({
     },
 
     toHiddenState() {
-        this.refs.element.setAttribute('data-state', 'hidden')
+        if (this.refs.element) {
+            this.refs.element.setAttribute('data-state', 'hidden')
+        }
     },
 
     componentWillMount() {
