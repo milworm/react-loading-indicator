@@ -3,6 +3,7 @@ import React from 'react'
 let Component = React.createClass({
     count: 0,
     runningTimerId: null,
+    refreshTimerId: null,
     hidingTimerId: null,
 
     getInitialState() {
@@ -13,15 +14,16 @@ let Component = React.createClass({
 
     getDefaultProps() {
         return {
-            cls: ''
+            className: '',
+            refreshTimeout: 0,
         }
     },
 
     render() {
-        let cls = `loader-60devs ${this.props.cls}`
+        let className = `loader-60devs ${this.props.className}`
 
         return (
-            <div className={cls} data-state={this.state.state} ref="element">
+            <div className={className} data-state={this.state.state} ref="element">
                 <div className="loader-60devs-progress"></div>
             </div>
         )
@@ -32,7 +34,7 @@ let Component = React.createClass({
             return 
 
         clearTimeout(this.hidingTimerId)
-
+        clearTimeout(this.refreshTimerId)
         var {element} = this.refs
         let progressEl = element.querySelector('.loader-60devs-progress')
 
@@ -43,12 +45,19 @@ let Component = React.createClass({
         element.setAttribute('data-state', '')
         element.offsetHeight
         element.setAttribute('data-state', 'running')
+        var that = this;
+        if (this.props.refreshTimeout > 0) {
+            this.refreshTimerId = setTimeout(function() {
+                that.hide();
+                that.show();
+            }, this.props.refreshTimeout);
+        }
     },
 
     hide() {
         if(-- this.count > 0)
             return 
-
+        clearTimeout(this.refreshTimerId)
         this.refs.element.setAttribute('data-state', 'finishing')
         this.hidingTimerId = setTimeout(this.toHiddenState, 500)
     },
@@ -59,7 +68,7 @@ let Component = React.createClass({
     },
 
     toHiddenState() {
-        this.refs.element.setAttribute('data-state', 'hidden')
+        this.refs.element && this.refs.element.setAttribute('data-state', 'hidden')
     },
 
     componentWillMount() {
@@ -71,7 +80,7 @@ let Component = React.createClass({
     },
 
     isVisible() {
-        return this.refs.element.getAttribute('data-state') != 'hidden'
+        return this.refs.element && this.refs.element.getAttribute('data-state') != 'hidden'
     }
 })
 
