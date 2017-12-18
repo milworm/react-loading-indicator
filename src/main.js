@@ -73,6 +73,7 @@ class Component extends React.Component {
 	}
 
 	componentWillUnmount () {
+		clearTimeout(this.hidingTimerId);
 		delete Component.instance
 	}
 
